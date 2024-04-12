@@ -1,0 +1,20 @@
+<div class="styleHeader">
+  <div class="flex flex-row gap-x-2">
+    @if (backButton) {
+      <ion-icon class="cursor-pointer" name="arrow-back-outline" (click)="back()" />
+    }
+    <span class="font-bold text-2xl">{{title}}</span>
+  </div>
+  <div class="flex flex-row gap-x-3">
+    <span class="text-xl cursor-pointer" [routerLink]="['/home']">Home</span>
+    <span class="text-xl cursor-pointer" [routerLink]="['/list_apps']">List Apps</span>
+    <span class="text-xl cursor-pointer" [routerLink]="['/about']">About</span>
+  </div>
+  <div>
+    @if (themeVal == '') {
+      <ion-icon class="cursor-pointer" name="sunny-outline" (click)="setTheme('dark')" />
+    } @else if (themeVal == 'dark') {
+      <ion-icon class="cursor-pointer" name="moon-outline" (click)="setTheme('')" />
+    }
+  </div>
+</div>

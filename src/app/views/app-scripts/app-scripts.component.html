@@ -1,0 +1,36 @@
+<div class="flex flex-col gap-5">
+  <div class="flex flex-row justify-between items-center styleBorderSolidLite border-b-2 !rounded-none pb-2">
+    <div class="flex flex-row gap-x-5">
+      <div class="flex flex-col gap-y-1">
+        <span>List scripts for</span>
+        <span class="font-bold text-xl">{{appInfo?.exe_file}}</span>
+      </div>
+      <div class="flex flex-col gap-y-1">
+        <span>Status</span>
+        <span class="font-bold text-xl" [ngClass]="[appInfo?.status == 'Running' ? 'text-green-500' : 'text-red-600']">{{appInfo?.status}}</span>
+      </div>
+    </div>
+    <button class="styleBut" (click)="modifyScript()">
+      <ion-icon name="add-circle-outline" />
+      <span>Create script</span>
+    </button>
+  </div>
+
+  @for (script of listScripts; track script; let i = $index) {
+    <div class="flex flex-row justify-between items-center gap-y-2 styleBorderSolidLite border p-5">
+      <div class="flex flex-row gap-x-2 text-xl">
+        <span>{{i+1}})</span>
+        <span>{{script}}</span>
+      </div>
+      <div class="flex flex-row gap-x-3">
+        <ion-icon name="play-outline" class="!text-2xl" (click)="startScript(script)" />
+        <ion-icon name="create-outline" class="!text-2xl" (click)="modifyScript(script)" />
+        <ion-icon name="trash-outline" class="!text-2xl" (click)="deleteScript(script)" />
+      </div>
+    </div>
+  }
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify">
+</app-window-notify>

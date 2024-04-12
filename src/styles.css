@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.styleBody {
+  @apply text-black bg-white dark:text-white dark:bg-zinc-900 top-0 left-0 m-0
+}
+
+.styleHeader {
+  @apply styleBody flex flex-row p-4 mx-auto items-center justify-between styleBorderSolidLite border-b-2 !rounded-none w-full fixed z-10
+}
+
+.styleWindNotify {
+  @apply fixed top-1 right-1 z-[999] border styleBorderSolid !border-white rounded-lg flex flex-col text-white
+}
+
+.styleBackWind {
+  @apply fixed left-0 top-0 m-0 bg-white/30 dark:bg-black/30 w-full h-[100vh]
+}
+
+.styleWind {
+  @apply top-[25%] left-[25%] z-50 p-4 bg-white dark:bg-zinc-900 absolute mx-auto w-1/2 rounded-xl border styleBorderSolid
+}
+
+.styleBorderSolid {
+  @apply border-solid border-black dark:border-white
+}
+
+.styleBorderSolidLite {
+  @apply rounded-lg border-solid border-zinc-600 dark:border-zinc-500
+}
+
+.styleLink {
+  @apply no-underline text-blue-700 dark:text-red-500 cursor-pointer
+}
+
+.styleField {
+  @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+}
+
+.styleBut {
+  @apply rounded-lg py-2 px-4 border-b-4 flex flex-row justify-center text-center items-center bg-blue-600 border-solid border-blue-950 text-white dark:bg-green-800 dark:border-green-900 dark:text-white active:border-0 active:mt-1
+}
+
+.styleTD {
+  @apply border-2 styleBorderSolid p-1 !border-gray-500 dark:!border-gray-600
+}
+
+ion-icon {
+  @apply !text-4xl z-0
+}
+
+svg {
+  @apply fill-black dark:fill-white stroke-black dark:stroke-white
+}
+
+.mat-datepicker-content, .mat-calendar, .mat-mdc-select-panel, .mat-mdc-menu-panel {
+  @apply !rounded-xl
+}
+
+.mat-calendar, .mat-mdc-select-panel, .mat-mdc-menu-panel {
+  @apply !bg-slate-300 dark:!bg-neutral-800
+}
+
+.mat-calendar-body-label,
+.mat-calendar-body-cell-content,
+.mat-datepicker-content,
+.mat-mdc-icon-button,
+.mat-datepicker-content,
+.mat-mdc-button:not(:disabled),
+.mat-mdc-icon-button:not(.mat-mdc-button-disabled),
+.ng-star-inserted,
+.mdc-floating-label,
+.mdc-text-field--filled:not(.mdc-text-field--disabled),
+.mdc-text-field__input,
+.mat-mdc-select,
+.mat-mdc-option {
+  @apply !text-black dark:!text-white
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  @apply !h-0
+}
+
+.mat-mdc-text-field-wrapper {
+  @apply !rounded-lg !text-gray-900 dark:!text-white !bg-slate-300 dark:!bg-neutral-800 border !border-gray-400 dark:!border-gray-600 focus:!ring-blue-500 dark:focus:!ring-blue-500 focus:!border-blue-500 dark:focus:!border-blue-500 dark:placeholder:!text-gray-100 placeholder:!text-lg
+}
+
+.mdc-line-ripple {
+  @apply hidden
+}

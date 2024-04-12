@@ -1,0 +1,65 @@
+<div class="flex flex-col gap-5">
+  <span class="font-bold text-2xl">Favorites</span>
+  @for (favorite of favorites; track favorite) {
+    <div class="flex flex-row justify-between items-center styleBorderSolid border p-5 rounded-xl hover:bg-gray-400 dark:hover:bg-gray-700">
+      <div class="flex flex-col gap-y-2 w-full" (click)="pageWithScipts(favorite)">
+        <div class="flex flex-row gap-x-2">
+          <span class="font-semibold text-gray-800 dark:text-gray-300">Title window:</span>
+          <span>{{favorite.title}}</span>
+        </div>
+        <div class="flex flex-row gap-x-2">
+          <span class="font-semibold text-gray-800 dark:text-gray-300">Execution file:</span>
+          <span>{{favorite.exe_file}}</span>
+        </div>
+        <div class="flex flex-row gap-x-2">
+          <span class="font-semibold text-gray-800 dark:text-gray-300">Program status:</span>
+          <span>{{favorite.status}}</span>
+        </div>
+      </div>
+      <ion-icon name="star" (click)="unsetFavor(favorite.exe_file)" />
+    </div>
+  }
+  @if (favorites.length == 0) {
+    <div class="flex flex-col items-center w-full">
+      <div class="text-center w-2/3">
+        <span class="font-bold text-xl">No favorite programs found! (Click on the asterisk in the program bar to add the program to your favorites)</span>
+      </div>
+    </div>
+  }
+  <div class="flex flex-row justify-between">
+    <span class="font-bold text-2xl">All Apps</span>
+    <div class="flex flex-row gap-x-2">
+      <app-search
+        [tempArray]="tempListApps"
+        (array)="searchFunc($event)"
+      ></app-search>
+      <ion-icon name="refresh-outline" id="refreshBut" (click)="getListWindows()" />
+    </div>
+  </div>
+  @for (app of listApps; track app) {
+    <div class="flex flex-row justify-between items-center gap-y-2 styleBorderSolid border p-5 rounded-xl hover:bg-gray-400 dark:hover:bg-gray-700">
+      <div class="flex flex-col gap-y-2 w-full" (click)="pageWithScipts(app)">
+        <div class="flex flex-row gap-x-2">
+          <span class="font-semibold text-gray-800 dark:text-gray-300">Title window:</span>
+          <span>{{app.title}}</span>
+        </div>
+        <div class="flex flex-row gap-x-2">
+          <span class="font-semibold text-gray-800 dark:text-gray-300">Execution file:</span>
+          <span>{{app.exe_file}}</span>
+        </div>
+      </div>
+      <ion-icon name="star-outline" (click)="setFavor(app)" />
+    </div>
+  }
+  @if (listApps.length == 0) {
+    <div class="flex flex-col items-center w-full">
+      <div class="text-center w-2/3">
+        <span class="font-bold text-xl">No running programs found! (There may be problems in the system or in the program)</span>
+      </div>
+    </div>
+  }
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify">
+</app-window-notify>

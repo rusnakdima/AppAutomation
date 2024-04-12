@@ -1,0 +1,64 @@
+{
+  "build": {
+    "beforeDevCommand": "pnpm start",
+    "beforeBuildCommand": "pnpm build",
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist/app-automation/browser"
+  },
+  "package": {
+    "productName": "app-automation",
+    "version": "0.1.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "fs": {
+        "all": true,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "exists": true,
+        "scope": ["$DOCUMENT/AppAutomation/*", "$DOWNLOAD"]
+      },
+      "path": {
+        "all": true
+      },
+      "dialog": {
+        "all": true,
+        "ask": true,
+        "confirm": true,
+        "message": true,
+        "open": true,
+        "save": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.tcs.appautomation",
+      "icon": [
+        "icons/128x128.png",
+        "icons/icon.ico",
+        "icons/icon.png"
+      ]
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "App Automation",
+        "width": 800,
+        "height": 600,
+        "minHeight": 400,
+        "minWidth": 400,
+        "fullscreen": false,
+        "resizable": true
+      }
+    ]
+  }
+}
