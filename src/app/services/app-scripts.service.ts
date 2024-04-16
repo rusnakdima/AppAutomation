@@ -8,8 +8,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 export class AppScriptsService {
   constructor() { }
 
-  getListScripts(exeFile: string) {
-    return invoke("get_scripts", { exeFile: exeFile });
+  getListScripts() {
+    return invoke("get_scripts");
   }
   
   getCommandsScript(nameScript: string) {

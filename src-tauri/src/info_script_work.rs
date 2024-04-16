@@ -201,10 +201,26 @@ fn start_script(raw_hwnd: String, raw_commands: String) -> Result<String, serde_
   
   std::thread::sleep(std::time::Duration::from_secs(1));
 
+  let mut count_focus = 0;
+
   unsafe {
     while GetForegroundWindow() != previous_hwnd {
+      count_focus += 1;
       SetForegroundWindow(previous_hwnd);
       std::thread::sleep(std::time::Duration::from_secs(1));
+      if count_focus == 5 {
+        log.push(
+          HashMap::from([
+            ("time".to_string(), Local::now().time().format("%H:%M:%S").to_string()),
+            ("status".to_string(), "error".to_string()),
+            ("text".to_string(), "The number of attempts to focus the specified window has been exceeded!".to_string())
+          ])
+        );
+
+        std::thread::sleep(std::time::Duration::from_secs(1));
+
+        return serde_json::to_string(&log);
+      }
     }
   }
 

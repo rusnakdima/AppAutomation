@@ -4,7 +4,8 @@ export interface KeyData {
 }
 
 export interface Command {
-  link_field: number;
+  id: string;
+  link_field: string;
   type: "keyboard" | "mouse" | "time";
   key: Array<KeyData>;
   button: "left" | "right" | "middle" | "scrollUp" | "scrollDown" | "scrollLeft" | "scrollRight";

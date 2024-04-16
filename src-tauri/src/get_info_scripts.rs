@@ -25,23 +25,12 @@ fn read_file(name_file: String) -> Result<(PathBuf, String), std::io::Error> {
   Ok((file_path, contents))
 }
 
-fn get_list_scripts(exe_file: String) -> Result<Vec<String>, serde_json::Error> {
-  let mut list_scripts: Vec<String> = Vec::new();
+fn get_list_scripts() -> Result<serde_json::Value, serde_json::Error> {
+  let (_file_path, contents) = read_file("app_scripts.json".to_string()).unwrap();
 
-  let (file_path, contents) = read_file("app_scripts.json".to_string()).unwrap();
+  let json: serde_json::Value = serde_json::from_str(&contents).unwrap();
 
-  let mut json: serde_json::Value = serde_json::from_str(&contents).unwrap();
-  if json[exe_file.clone()].is_null() {
-    json[exe_file.clone()] = serde_json::Value::Array(Vec::new());
-    fs::write(&file_path, serde_json::to_string(&json).unwrap()).expect("Failed to write data to file");
-  }
-
-  let scripts: Vec<String> = json[exe_file].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect();
-  for script in scripts {
-    list_scripts.push(script.clone());
-  }
-
-  Ok(list_scripts)
+  Ok(json)
 }
 
 fn get_commands_script(name_script: String) -> String {
@@ -92,8 +81,8 @@ fn delete(exe_file: String, name_script: String) -> String {
 
 
 #[tauri::command]
-pub fn get_scripts(exe_file: String) -> String {
-  let data = get_list_scripts(exe_file).unwrap();
+pub fn get_scripts() -> String {
+  let data = get_list_scripts().unwrap();
   let json_string = serde_json::to_string(&data).unwrap();
   format!("{}", json_string)
 }

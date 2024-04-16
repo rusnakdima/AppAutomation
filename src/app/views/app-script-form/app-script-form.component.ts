@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as uuid from 'uuid';
 import { Subject } from 'rxjs';
 
 /* material */
@@ -13,7 +14,6 @@ import { MatMenuModule } from '@angular/material/menu';
 
 /* models */
 import { KeyData, Command } from '@models/command';
-import { Script } from '@models/script';
 
 /* components */
 import { INotify, WindowNotifyComponent } from '@views/shared/window-notify/window-notify.component';
@@ -50,7 +50,7 @@ export class AppScriptFormComponent {
   exeFile: string = '';
   nameScript: string = '';
 
-  listScripts: Array<Script> = [];
+  listScripts: Array<string> = [];
   listKeys: Array<string> = [];
   listNumKeys: Array<string> = [];
   listAnotherKeys: Array<string> = ["Space", "Esc", "Ctrl", "Shift", "Alt", "Enter", "Tab", "Delete", "Home", "PageUp", "PageDown", "End"];
@@ -83,7 +83,7 @@ export class AppScriptFormComponent {
   isExistName(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
-      const elem = this.listScripts.find((script: Script) => script.name === value);
+      const elem = this.listScripts.find((script: string) => script === value);
       if (elem) {
         return { isExist: true };
       }
@@ -112,16 +112,16 @@ export class AppScriptFormComponent {
   }
 
   getNameScripts() {
-    this.appScriptsService.getListScripts(this.exeFile)
+    this.appScriptsService.getListScripts()
     .then((data: any) => {
-      const parseData: Array<string> = JSON.parse(data);
-      parseData.forEach((value: string) => {
-        const obj = {
-          name: value,
-          commands: []
-        }
-        this.listScripts.push(obj);
-      });
+      if (data && data != '') {
+        const parseData: {[key: string]: any} = JSON.parse(data);
+        Object.values(parseData).forEach((app_scrips: Array<string>) => {
+          app_scrips.forEach((script: string) => {
+            this.listScripts.push(script);
+          })
+        });
+      }
     })
     .catch((err: any) => {
       console.error(err);
@@ -140,6 +140,14 @@ export class AppScriptFormComponent {
   getFieldGroup(indexGroup: number, field: string) {
     if (this.commands.at(indexGroup)) {
       return (this.commands.at(indexGroup) as FormGroup).get(field);
+    }
+    return;
+  }
+
+  getFieldGroupById(id: string, field: string) {
+    const index = this.commands.controls.findIndex(c => c.value.id === id);
+    if (this.commands.at(index)) {
+      return (this.commands.at(index) as FormGroup).get(field);
     }
     return;
   }
@@ -164,8 +172,8 @@ export class AppScriptFormComponent {
     return false;
   }
 
-  getKeys(index: number) {
-    const dataKeys: Array<KeyData> = this.getFieldGroup(index, 'key')?.value;
+  getKeysById(id: string) {
+    const dataKeys: Array<KeyData> = this.getFieldGroupById(id, 'key')?.value;
     let listKeys: Array<string> = [];
     let rawString: string = '';
     if (Array.isArray(dataKeys)) {
@@ -178,12 +186,11 @@ export class AppScriptFormComponent {
   }
 
   getKeyUpByDown(index: number) {
-    const indexDown = this.getFieldGroup(index, 'link_field')?.value;
-    if (indexDown != null) {
-      const dataKeys = this.getFieldGroup(indexDown, 'key')?.value;
-      const dataTypePress = this.getFieldGroup(indexDown, 'type_press')?.value;
-      if (Array.isArray(dataKeys) && dataTypePress == "down") {
-        return this.getKeys(indexDown);
+    const id = this.getFieldGroup(index, 'link_field')?.value;
+    if (id) {
+      const dataTypePress = this.getFieldGroupById(id, 'type_press')?.value;
+      if (dataTypePress == "down") {
+        return this.getKeysById(id);
       } else {
         this.removeCommand(index);
       }
@@ -191,13 +198,40 @@ export class AppScriptFormComponent {
     return 'N/A';
   }
 
-  addCommand(index: number, indexKeyD: number, type: string, type_press: string = 'click') {
-    const listKeys = (type_press == 'up') ? this.getFieldGroup(indexKeyD, 'key')?.value : [{ type: 'letter', key: 'A' }];
+  setDisableField(index: number, field: string) {
+    if (this.getFieldGroup(index, 'type_press')?.value == "up") {
+      this.getFieldGroup(index, field)?.disable();
+      // console.log(this.commands.value)
+      return true;
+    }
+    return false;
+  }
+
+  setValue(index: number, field: string, event: any) {
+    const id = this.getFieldGroup(index, 'id')?.value;
+    if (id && (
+      (field == 'type' && event != 'time') ||
+      (field == 'button') ||
+      (field == 'type_press' && event == 'down')
+    )) {
+      const indexGroup = this.commands.controls.findIndex(c => c.value.link_field === id);
+      this.getFieldGroup(indexGroup, field)?.setValue(event);
+    } else {
+      this.getFieldGroup(index, 'type_press')?.setValue('click');
+      const indexGroup = this.commands.controls.findIndex(c => c.value.link_field === id);
+      if (indexGroup > -1) {
+        this.removeCommand(indexGroup);
+      }
+    }
+  }
+
+  addCommand(index: number) {
     const command = this.fb.group({
-      link_field: [indexKeyD],
-      type: [type, Validators.required],
-      key: [listKeys],
-      type_press: [type_press],
+      id: [uuid.v4()],
+      link_field: [''],
+      type: ['keyboard', Validators.required],
+      key: [[{ type: 'letter', key: 'A' }]],
+      type_press: ['click'],
       button: ['left'],
       move_dir: ['x'],
       move_amount: [0],
@@ -208,14 +242,21 @@ export class AppScriptFormComponent {
     this.commands.insert(index, command);
   }
 
-  addCommandKeyUp(index: number, type: string, event: any) {
+  addCommandKeyUp(index: number, event: any) {
     if (event.value == "down") {
-      this.addCommand(index+1, index, type, 'up');
+      this.addCommand(index+1);
+      const commandDown = this.getGroupCommandsByIndex(index);
+      let command = this.getGroupCommandsByIndex(index+1);
+      command.setValue(commandDown.value);
+      command.controls['id'].setValue(uuid.v4());
+      command.controls['link_field'].setValue(commandDown.controls['id'].value);
+      command.controls['type_press'].setValue('up');
     }
   }
 
   insertFromData(command: Command) {
     const commandGroup = this.fb.group({
+      id: [command.id],
       link_field: [command.link_field],
       type: [command.type, Validators.required],
       key: [command.key],
@@ -249,11 +290,20 @@ export class AppScriptFormComponent {
       });
     }
 
+    this.commands.controls.forEach((control: any) => {
+      Object.keys(control.controls).forEach((field: any) => {
+        if (control.controls[field].disabled) {
+          control.controls[field].enable();
+        }
+      })
+    });
+
     if (this.scriptForm.valid) {
       this.nameScript = this.f['name'].value;
       this.appScriptsService.createScript(this.exeFile, this.f['name'].value, JSON.stringify(this.commands.value))
       .then((data: any) => {
         this.dataNotify.next({status: 'success', text: data});
+        this.location.back();
       })
       .catch((err: any) => {
         console.error(err);

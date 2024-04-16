@@ -46,9 +46,16 @@ export class AppScriptsComponent implements OnInit {
   }
 
   getListScripts() {
-    this.appScriptsService.getListScripts(this.appInfo!.exe_file)
+    this.appScriptsService.getListScripts()
     .then((data: any) => {
-      this.listScripts = JSON.parse(data);
+      if (data && data != '') {
+        const app_scripts = JSON.parse(data);
+        if (app_scripts[this.appInfo!.exe_file]) {
+          this.listScripts = app_scripts[this.appInfo!.exe_file];
+        } else {
+          this.dataNotify.next({status: 'error', text: "No scripts were found for this program!"});
+        }
+      }
     })
     .catch((err: any) => {
       console.error(err);

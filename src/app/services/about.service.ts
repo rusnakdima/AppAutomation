@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { invoke } from "@tauri-apps/api/tauri";
 
 /* env */
-import { environvent } from '../../environments/environment';
+import { environvent } from '@env/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({

@@ -52,7 +52,7 @@
         <div class="flex flex-row flex-wrap gap-2">
           <mat-form-field>
             <mat-label>Type action</mat-label>
-            <mat-select formControlName="type" [disabled]="getFieldGroup(i, 'type_press')?.value == 'up'">
+            <mat-select formControlName="type" (valueChange)="setValue(i, 'type', $event)" [disabled]="setDisableField(i, 'type')">
               <mat-option value="keyboard">Keyboard</mat-option>
               <mat-option value="mouse">Mouse</mat-option>
               <mat-option value="time">Time</mat-option>
@@ -67,7 +67,7 @@
           @if (getFieldGroup(i, 'type')?.value == "keyboard" && getFieldGroup(i, 'type_press')?.value != "up") {
             <mat-form-field [matMenuTriggerFor]="menuKeys">
               <mat-label>Key name</mat-label>
-              <input matInput type="text" [value]="getKeys(i)" readonly />
+              <input matInput type="text" [value]="getKeysById(getFieldGroup(i, 'id')!.value)" readonly />
               <mat-menu #menuKeys="matMenu">
                 <div class="grid grid-cols-6 p-3 gap-3" (click)="$event.stopPropagation()">
                   @for (key of listKeys; track key) {
@@ -103,7 +103,7 @@
           @if (getFieldGroup(i, 'type_press')?.value != "move" && getFieldGroup(i, 'type')?.value == "mouse") {
             <mat-form-field>
               <mat-label>Mouse button</mat-label>
-              <mat-select formControlName="button">
+              <mat-select formControlName="button" (valueChange)="setValue(i, 'button', $event)" [disabled]="setDisableField(i, 'button')">
                 <mat-option value="left">Left</mat-option>
                 <mat-option value="right">Right</mat-option>
                 <mat-option value="middle">Middle</mat-option>
@@ -123,7 +123,7 @@
           @if (getFieldGroup(i, 'type')?.value == "keyboard" || getFieldGroup(i, 'type')?.value == "mouse") {
             <mat-form-field>
               <mat-label>Type click</mat-label>
-              <mat-select (selectionChange)="addCommandKeyUp(i, getFieldGroup(i, 'type')?.value, $event)" formControlName="type_press">
+              <mat-select (selectionChange)="addCommandKeyUp(i, $event)" formControlName="type_press" (valueChange)="setValue(i, 'type_press', $event)" [disabled]="setDisableField(i, 'type_press')">
                 <mat-option value="click" selected>Click</mat-option>
                 <mat-option value="down">Key down</mat-option>
                 <mat-option value="up" disabled>Key up</mat-option>
@@ -173,10 +173,10 @@
           }
         </div>
       </div>
-      <button class="styleBut !w-max" (click)="addCommand(i+1, i+1, 'keyboard')">Add</button>
+      <button class="styleBut !w-max" (click)="addCommand(i+1)">Add</button>
     }
     @if (commands.controls.length == 0) {
-      <button class="styleBut !w-max" (click)="addCommand(0, 0, 'keyboard')">Add</button>
+      <button class="styleBut !w-max" (click)="addCommand(0)">Add</button>
     }
   </ng-container>
 </div>

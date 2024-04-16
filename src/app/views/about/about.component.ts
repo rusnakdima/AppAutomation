@@ -4,9 +4,6 @@ import { Component } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { Subject } from 'rxjs';
 
-/* material */
-import { MatButtonModule } from '@angular/material/button';
-
 /* env */
 import { environvent } from '../../../environments/environment';
 
@@ -20,7 +17,7 @@ import { INotify, WindowNotifyComponent } from '../shared/window-notify/window-n
   selector: 'app-about',
   standalone: true,
   providers: [AboutService],
-  imports: [CommonModule, HttpClientModule, MatButtonModule, WindowNotifyComponent],
+  imports: [CommonModule, HttpClientModule, WindowNotifyComponent],
   templateUrl: './about.component.html'
 })
 export class AboutComponent {
