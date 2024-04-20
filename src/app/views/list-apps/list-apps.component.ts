@@ -55,7 +55,10 @@ export class ListAppsComponent {
     .then((data: any) => {
       if (data) {
         this.listApps = JSON.parse(data);
-        this.tempListApps = JSON.parse(data);
+        this.listApps.forEach((record: AppInfo) => {
+          record.status = "Running";
+        });
+        this.tempListApps = this.listApps.slice();
       } else {
         throw Error("Invalid request");
       }

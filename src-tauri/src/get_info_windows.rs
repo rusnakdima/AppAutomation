@@ -1,9 +1,12 @@
 use serde_json;
 
 use std::collections::HashMap;
-use std::ffi::{c_void, OsString};
-use std::iter::once;
-use std::os::windows::ffi::{OsStrExt, OsStringExt};
+use std::ffi::OsString;
+// use std::ffi::c_void;
+// use std::iter::once;
+use std::ffi::CString;
+use std::os::windows::ffi::OsStringExt;
+// use std::os::windows::ffi::OsStrExt;
 use std::ptr;
 
 use winapi::shared::minwindef::DWORD;
@@ -12,9 +15,9 @@ use winapi::um::processthreadsapi::OpenProcess;
 use winapi::um::winbase::QueryFullProcessImageNameW;
 use winapi::um::winnt::PROCESS_QUERY_INFORMATION;
 use winapi::um::winuser::{
-	EnumWindows, GetWindowTextA, GetWindowTextLengthA, GetWindowThreadProcessId, IsWindowVisible,
+	EnumWindows, GetWindowTextA, GetWindowTextLengthA, GetWindowThreadProcessId, IsWindowVisible, FindWindowA
 };
-use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
+// use winapi::um::winver::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
 
 type InfoMap = HashMap<String, String>;
 
@@ -119,6 +122,19 @@ fn get_process_path_from_hwnd(hwnd: *mut HWND__) -> Option<String> {
 	}
 
 	None
+}
+
+pub fn get_hwnd_by_title(title: String) -> Option<*mut HWND__> {
+	unsafe {
+		let title_cstring = CString::new(title).expect("Failed to convert title to CString");
+		let hwnd_mut = FindWindowA(ptr::null(), title_cstring.as_ptr());
+
+		if hwnd_mut.is_null() {
+			return None;
+		}
+
+		Some(hwnd_mut)
+	}
 }
 
 fn get_list_windows() -> Vec<InfoMap> {

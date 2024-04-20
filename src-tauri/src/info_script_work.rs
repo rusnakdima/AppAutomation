@@ -1,3 +1,5 @@
+use crate::get_info_windows::get_hwnd_by_title;
+
 use std::collections::HashMap;
 
 use serde_json;
@@ -6,7 +8,8 @@ use enigo::*;
 use chrono::*;
 use rand::Rng;
 
-use winapi::{shared::windef::HWND__, um::winuser::{GetForegroundWindow, SetForegroundWindow}};
+use winapi::shared::windef::HWND__;
+use winapi::um::winuser::{GetForegroundWindow, SetForegroundWindow};
 
 fn start_script(raw_hwnd: String, raw_commands: String) -> Result<String, serde_json::Error> {
   let hwnd_usize: usize = raw_hwnd.parse().unwrap();
@@ -22,6 +25,19 @@ fn start_script(raw_hwnd: String, raw_commands: String) -> Result<String, serde_
   }
 
   let previous_hwnd = unsafe { GetForegroundWindow() };
+
+  match get_hwnd_by_title("App Automation".to_string()) {
+    Some(hwnd_app) => {
+      unsafe { 
+        while GetForegroundWindow() != hwnd_app {
+          SetForegroundWindow(hwnd_app);
+          std::thread::sleep(std::time::Duration::from_secs(1));
+        }
+      }
+    },
+    None => {}
+  }
+  std::thread::sleep(std::time::Duration::from_secs(1));
 
   let mut count_focus = 0;
 

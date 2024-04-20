@@ -1,6 +1,6 @@
 /* system libraries */
 import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppInfo } from '@models/app-info';
 import { Subject } from 'rxjs';
@@ -26,7 +26,7 @@ interface Log {
   imports: [CommonModule, WindowNotifyComponent],
   templateUrl: './script-log.component.html'
 })
-export class ScriptLogComponent {
+export class ScriptLogComponent implements OnInit, OnDestroy {
   title: string = '';
 
   constructor(
@@ -52,6 +52,10 @@ export class ScriptLogComponent {
     setTimeout(() => {
       this.getCommandsScript();
     }, 500);
+  }
+
+  ngOnDestroy(): void {
+    this.stop();
   }
 
   getCommandsScript() {
