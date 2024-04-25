@@ -13,7 +13,7 @@
         </div>
         <div class="flex flex-row gap-x-2">
           <span class="font-semibold text-gray-800 dark:text-gray-300">Program status:</span>
-          <span [ngClass]="favorite.status == 'Running' ? 'text-green-500' : 'text-red-600' ">{{favorite.status}}</span>
+          <span class="font-bold" [ngClass]="favorite.status == 'Running' ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500' ">{{favorite.status}}</span>
         </div>
       </div>
       <ion-icon name="star" (click)="unsetFavor(favorite.exe_file)" />

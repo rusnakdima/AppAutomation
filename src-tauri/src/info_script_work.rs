@@ -1,4 +1,4 @@
-use crate::get_info_windows::get_hwnd_by_title;
+// use crate::get_info_windows::get_hwnd_by_title;
 
 use std::collections::HashMap;
 
@@ -26,18 +26,18 @@ fn start_script(raw_hwnd: String, raw_commands: String) -> Result<String, serde_
 
   let previous_hwnd = unsafe { GetForegroundWindow() };
 
-  match get_hwnd_by_title("App Automation".to_string()) {
-    Some(hwnd_app) => {
-      unsafe { 
-        while GetForegroundWindow() != hwnd_app {
-          SetForegroundWindow(hwnd_app);
-          std::thread::sleep(std::time::Duration::from_secs(1));
-        }
-      }
-    },
-    None => {}
-  }
-  std::thread::sleep(std::time::Duration::from_secs(1));
+  // match get_hwnd_by_title("App Automation".to_string()) {
+  //   Some(hwnd_app) => {
+  //     unsafe { 
+  //       while GetForegroundWindow() != hwnd_app {
+  //         SetForegroundWindow(hwnd_app);
+  //         std::thread::sleep(std::time::Duration::from_secs(1));
+  //       }
+  //     }
+  //   },
+  //   None => {}
+  // }
+  // std::thread::sleep(std::time::Duration::from_secs(1));
 
   let mut count_focus = 0;
 

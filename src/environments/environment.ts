@@ -1,5 +1,5 @@
 export const environvent = {
   production: false,
-  version: '0.3.0',
+  version: '0.3.1',
   nameProduct: 'AppAutomation'
 }

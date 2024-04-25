@@ -7,7 +7,7 @@
       </div>
       <div class="flex flex-col gap-y-1">
         <span>Status</span>
-        <span class="font-bold text-xl" [ngClass]="[appInfo?.status == 'Running' ? 'text-green-500' : 'text-red-600']">{{appInfo?.status}}</span>
+        <span class="font-bold text-xl" [ngClass]="[appInfo?.status == 'Running' ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500']">{{appInfo?.status}}</span>
       </div>
     </div>
     <button class="styleBut" (click)="modifyScript()">

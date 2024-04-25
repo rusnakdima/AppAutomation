@@ -124,18 +124,18 @@ fn get_process_path_from_hwnd(hwnd: *mut HWND__) -> Option<String> {
 	None
 }
 
-pub fn get_hwnd_by_title(title: String) -> Option<*mut HWND__> {
-	unsafe {
-		let title_cstring = CString::new(title).expect("Failed to convert title to CString");
-		let hwnd_mut = FindWindowA(ptr::null(), title_cstring.as_ptr());
+// pub fn get_hwnd_by_title(title: String) -> Option<*mut HWND__> {
+// 	unsafe {
+// 		let title_cstring = CString::new(title).expect("Failed to convert title to CString");
+// 		let hwnd_mut = FindWindowA(ptr::null(), title_cstring.as_ptr());
 
-		if hwnd_mut.is_null() {
-			return None;
-		}
+// 		if hwnd_mut.is_null() {
+// 			return None;
+// 		}
 
-		Some(hwnd_mut)
-	}
-}
+// 		Some(hwnd_mut)
+// 	}
+// }
 
 fn get_list_windows() -> Vec<InfoMap> {
 	let mut list_windows: Vec<InfoMap> = Vec::new();

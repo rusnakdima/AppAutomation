@@ -12,7 +12,7 @@
     </div>
     <div class="flex flex-col ">
       <span>Status script</span>
-      <span class="font-bold text-xl" [ngClass]="[status == 'Running' ? 'text-green-500' : status == 'Wait' ? 'text-yellow-300' : 'text-red-600']">{{status}}</span>
+      <span class="font-bold text-xl" [ngClass]="[status == 'Running' ? 'text-green-700 dark:text-green-500' : status == 'Wait' ? 'text-yellow-500 dark:text-yellow-300' : 'text-red-700 dark:text-red-500']">{{status}}</span>
     </div>
     <div class="flex flex-row gap-x-3">
       <button class="styleBut" (click)="start()">
@@ -43,7 +43,7 @@
             <tr>
               <td class="styleTD px-3">{{i+1}}</td>
               <td class="styleTD px-3">{{record.time}}</td>
-              <td class="styleTD px-3" [ngClass]="record.status == 'error' ? 'text-red-600' : 'text-green-500'">{{record.text}}</td>
+              <td class="styleTD px-3" [ngClass]="record.status == 'success' ? 'text-green-700 dark:text-green-500' : 'text-red-700 dark:text-red-500'">{{record.text}}</td>
             </tr>
           }
         </tbody>
