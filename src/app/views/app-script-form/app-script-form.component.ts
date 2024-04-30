@@ -15,9 +15,11 @@ import { MatMenuModule } from '@angular/material/menu';
 /* models */
 import { KeyData, Command } from '@models/command';
 
+/* services */
+import { AppScriptsService } from '@services/app-scripts.service';
+
 /* components */
 import { INotify, WindowNotifyComponent } from '@views/shared/window-notify/window-notify.component';
-import { AppScriptsService } from '@services/app-scripts.service';
 
 @Component({
   selector: 'app-app-script-form',
