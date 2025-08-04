@@ -157,7 +157,7 @@ fn start_script(raw_hwnd: String, raw_commands: String) -> Result<String, serde_
             ]));
           }
         }
-      } else if type_key == "fn" {
+      } else if type_key == "fnkey" {
         let name_key = key_data.get("key").unwrap().as_str().unwrap();
         let mut key_but: Key = Key::F1;
         match name_key {
