@@ -1,13 +1,15 @@
 <div class="flex flex-col gap-5">
-  <div class="flex flex-row justify-between items-center styleBorderSolidLite border-b-2 !rounded-none pb-2">
+  <div
+    class="flex flex-row justify-between items-center styleBorderSolidLite border-b-2 !rounded-none pb-2"
+  >
     <div class="flex flex-col gap-y-2">
       <div class="flex flex-row gap-x-2 items-end">
         <span>Name script:</span>
-        <span class="font-bold text-xl">{{nameScript}}</span>
+        <span class="font-bold text-xl">{{ nameScript }}</span>
       </div>
       <div class="flex flex-row gap-x-2 items-end">
         <span>Script for:</span>
-        <span class="font-bold text-xl">{{exeFile}}</span>
+        <span class="font-bold text-xl">{{ exeFile }}</span>
       </div>
     </div>
     <div class="flex flex-row gap-x-3">
@@ -21,166 +23,244 @@
       <mat-label>Name script</mat-label>
       <input matInput type="text" formControlName="name" />
       @if (f['name'].errors?.['required']) {
-        <div>
-          <span class="text-red-500">Field 'Name script' should not be empty</span>
-        </div>
+      <div>
+        <span class="text-red-500"
+          >Field 'Name script' should not be empty</span
+        >
+      </div>
       } @else if (f['name'].errors?.['isExist']) {
-        <div>
-          <span class="text-red-500">Such a script already exists</span>
-        </div>
+      <div>
+        <span class="text-red-500">Such a script already exists</span>
+      </div>
       }
     </mat-form-field>
 
     @if (isGetCommands) {
-      <div class="flex flex-col items-center">
-        <span class="text-2xl">Wait! A data request is in progress!</span>
+    <div class="flex flex-col items-center">
+      <span class="text-2xl">Wait! A data request is in progress!</span>
+    </div>
+    } @for (command of commands.controls; track command; let i = $index) {
+    <div
+      class="flex flex-col gap-y-2 styleBorderSolidLite border p-3"
+      [formGroup]="getGroupCommandsByIndex(i)"
+    >
+      <div class="flex flex-row justify-between">
+        <span class="font-semibold text-gray-600 dark:text-gray-400 text-lg"
+          >#{{ i + 1 }} command</span
+        >
+
+        @if (getFieldGroup(i, 'type_press')?.value != "up") {
+        <ion-icon name="close-outline" (click)="removeCommand(i)" />
+        } @else {
+        <ion-icon name="close-outline" />
+        }
       </div>
-    }
 
-    @for (command of commands.controls; track command; let i = $index) {
-      <div class="flex flex-col gap-y-2 styleBorderSolidLite border p-3" [formGroup]="getGroupCommandsByIndex(i)">
-        <div class="flex flex-row justify-between">
-          <span class="font-semibold text-gray-600 dark:text-gray-400 text-lg">#{{i+1}} command</span>
-
-          @if (getFieldGroup(i, 'type_press')?.value != "up") {
-            <ion-icon name="close-outline" (click)="removeCommand(i)" />
-          } @else {
-            <ion-icon name="close-outline" />
+      <div class="flex flex-row flex-wrap gap-2">
+        <mat-form-field>
+          <mat-label>Type action</mat-label>
+          <mat-select
+            formControlName="type"
+            (valueChange)="setValue(i, 'type', $event)"
+            [disabled]="setDisableField(i, 'type')"
+          >
+            <mat-option value="keyboard">Keyboard</mat-option>
+            <mat-option value="mouse">Mouse</mat-option>
+            <mat-option value="time">Time</mat-option>
+          </mat-select>
+          @if (getFieldGroup(i, 'type')?.errors?.['required']) {
+          <div>
+            <span class="text-red-500">Field 'Type' should not be empty</span>
+          </div>
           }
-        </div>
+        </mat-form-field>
 
-        <div class="flex flex-row flex-wrap gap-2">
-          <mat-form-field>
-            <mat-label>Type action</mat-label>
-            <mat-select formControlName="type" (valueChange)="setValue(i, 'type', $event)" [disabled]="setDisableField(i, 'type')">
-              <mat-option value="keyboard">Keyboard</mat-option>
-              <mat-option value="mouse">Mouse</mat-option>
-              <mat-option value="time">Time</mat-option>
-            </mat-select>
-            @if (getFieldGroup(i, 'type')?.errors?.['required']) {
-              <div>
-                <span class="text-red-500">Field 'Type' should not be empty</span>
-              </div>
-            }
-          </mat-form-field>
-
-          @if (getFieldGroup(i, 'type')?.value == "keyboard" && getFieldGroup(i, 'type_press')?.value != "up") {
-            <mat-form-field [matMenuTriggerFor]="menuKeys">
-              <mat-label>Key name</mat-label>
-              <input matInput type="text" [value]="getKeysById(getFieldGroup(i, 'id')!.value)" readonly />
-              <mat-menu #menuKeys="matMenu">
-                <div class="grid grid-cols-6 p-3 gap-3" (click)="$event.stopPropagation()">
-                  @for (key of listKeys; track key) {
-                    <button class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center" [ngClass]="checkChooseKeyBut(i, key) ? 'bg-gray-300 dark:bg-gray-600' : ''" (click)="setKey(i, key, 'letter')">{{key}}</button>
-                  }
-                </div>
-                <div class="grid grid-cols-6 p-3 gap-3" (click)="$event.stopPropagation()">
-                  @for (key of listNumKeys; track key) {
-                    <button class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center" [ngClass]="checkChooseKeyBut(i, key) ? 'bg-gray-300 dark:bg-gray-600' : ''" (click)="setKey(i, key, 'number')">{{key}}</button>
-                  }
-                </div>
-                <div class="flex flex-row flex-wrap p-3 gap-3" (click)="$event.stopPropagation()">
-                  @for (key of listAnotherKeys; track key) {
-                    <button class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center" [ngClass]="checkChooseKeyBut(i, key) ? 'bg-gray-300 dark:bg-gray-600' : ''" (click)="setKey(i, key, 'button')">{{key}}</button>
-                  }
-                </div>
-              </mat-menu>
-              @if (getFieldGroup(i, 'key')?.errors?.['isNotEmpty']) {
-                <div>
-                  <span class="text-red-500">Field 'Key' should not be empty</span>
-                </div>
+        @if (getFieldGroup(i, 'type')?.value == "keyboard" && getFieldGroup(i,
+        'type_press')?.value != "up") {
+        <mat-form-field [matMenuTriggerFor]="menuKeys">
+          <mat-label>Key name</mat-label>
+          <input
+            matInput
+            type="text"
+            [value]="getKeysById(getFieldGroup(i, 'id')!.value)"
+            readonly
+          />
+          <mat-menu #menuKeys="matMenu">
+            <div
+              class="grid grid-cols-6 p-3 gap-3"
+              (click)="$event.stopPropagation()"
+            >
+              @for (key of listKeys; track key) {
+              <button
+                class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center"
+                [ngClass]="
+                  checkChooseKeyBut(i, key)
+                    ? 'bg-gray-300 dark:bg-gray-600'
+                    : ''
+                "
+                (click)="setKey(i, key, 'letter')"
+              >
+                {{ key }}
+              </button>
               }
-            </mat-form-field>
-          }
-
-          @if (getFieldGroup(i, 'type')?.value == "keyboard" && getFieldGroup(i, 'type_press')?.value == "up") {
-            <mat-form-field>
-              <mat-label>Key name</mat-label>
-              <input matInput type="text" [value]="getKeyUpByDown(i)" readonly />
-            </mat-form-field>
-          }
-
-          @if (getFieldGroup(i, 'type_press')?.value != "move" && getFieldGroup(i, 'type')?.value == "mouse") {
-            <mat-form-field>
-              <mat-label>Mouse button</mat-label>
-              <mat-select formControlName="button" (valueChange)="setValue(i, 'button', $event)" [disabled]="setDisableField(i, 'button')">
-                <mat-option value="left">Left</mat-option>
-                <mat-option value="right">Right</mat-option>
-                <mat-option value="middle">Middle</mat-option>
-                <mat-option value="scrollUp">Scroll Up</mat-option>
-                <mat-option value="scrollDown">Scroll Down</mat-option>
-                <mat-option value="scrollLeft">Scroll Left</mat-option>
-                <mat-option value="scrollRight">Scroll Right</mat-option>
-              </mat-select>
-              @if (getFieldGroup(i, 'button')?.errors?.['isNotEmpty']) {
-                <div>
-                  <span class="text-red-500">Field 'Button' should not be empty</span>
-                </div>
+            </div>
+            <div
+              class="grid grid-cols-6 p-3 gap-3"
+              (click)="$event.stopPropagation()"
+            >
+              @for (key of listNumKeys; track key) {
+              <button
+                class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center"
+                [ngClass]="
+                  checkChooseKeyBut(i, key)
+                    ? 'bg-gray-300 dark:bg-gray-600'
+                    : ''
+                "
+                (click)="setKey(i, key, 'number')"
+              >
+                {{ key }}
+              </button>
               }
-            </mat-form-field>
-          }
-
-          @if (getFieldGroup(i, 'type')?.value == "keyboard" || getFieldGroup(i, 'type')?.value == "mouse") {
-            <mat-form-field>
-              <mat-label>Type click</mat-label>
-              <mat-select (selectionChange)="addCommandKeyUp(i, $event)" formControlName="type_press" (valueChange)="setValue(i, 'type_press', $event)" [disabled]="setDisableField(i, 'type_press')">
-                <mat-option value="click" selected>Click</mat-option>
-                <mat-option value="down">Key down</mat-option>
-                <mat-option value="up" disabled>Key up</mat-option>
-                <mat-option value="move" [disabled]="getFieldGroup(i, 'type')?.value != 'mouse'">Move mouse</mat-option>
-              </mat-select>
-            </mat-form-field>
-          }
-
-          @if (getFieldGroup(i, 'type_press')?.value == "move" && getFieldGroup(i, 'type')?.value == "mouse") {
-            <mat-form-field>
-              <mat-label>Direction cursor</mat-label>
-              <mat-select formControlName="move_dir">
-                <mat-option value="x">X</mat-option>
-                <mat-option value="y">Y</mat-option>
-              </mat-select>
-              @if (getFieldGroup(i, 'move_dir')?.errors?.['isNotEmpty']) {
-                <div>
-                  <span class="text-red-500">Field 'Mouse Move' should not be empty</span>
-                </div>
+            </div>
+            <div
+              class="flex flex-row flex-wrap p-3 gap-3"
+              (click)="$event.stopPropagation()"
+            >
+              @for (key of listAnotherKeys; track key) {
+              <button
+                class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center"
+                [ngClass]="
+                  checkChooseKeyBut(i, key)
+                    ? 'bg-gray-300 dark:bg-gray-600'
+                    : ''
+                "
+                (click)="setKey(i, key, 'button')"
+              >
+                {{ key }}
+              </button>
               }
-            </mat-form-field>
+            </div>
+            <div
+              class="flex flex-row flex-wrap p-3 gap-3"
+              (click)="$event.stopPropagation()"
+            >
+              @for (key of listFnKeys; track key) {
+              <button
+                class="styleBorderSolidLite border px-3 py-1 flex flex-col items-center"
+                [ngClass]="
+                  checkChooseKeyBut(i, key)
+                    ? 'bg-gray-300 dark:bg-gray-600'
+                    : ''
+                "
+                (click)="setKey(i, key, 'fnkey')"
+              >
+                {{ key }}
+              </button>
+              }
+            </div>
+          </mat-menu>
+          @if (getFieldGroup(i, 'key')?.errors?.['isNotEmpty']) {
+          <div>
+            <span class="text-red-500">Field 'Key' should not be empty</span>
+          </div>
           }
-
-          @if (getFieldGroup(i, 'type_press')?.value == "move" && getFieldGroup(i, 'type')?.value == "mouse") {
-            <mat-form-field>
-              <mat-label>Cursor offset distance</mat-label>
-              <input matInput type="number" formControlName="move_amount" />
-            </mat-form-field>
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type')?.value == "keyboard" && getFieldGroup(i,
+        'type_press')?.value == "up") {
+        <mat-form-field>
+          <mat-label>Key name</mat-label>
+          <input matInput type="text" [value]="getKeyUpByDown(i)" readonly />
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type_press')?.value != "move" &&
+        getFieldGroup(i, 'type')?.value == "mouse") {
+        <mat-form-field>
+          <mat-label>Mouse button</mat-label>
+          <mat-select
+            formControlName="button"
+            (valueChange)="setValue(i, 'button', $event)"
+            [disabled]="setDisableField(i, 'button')"
+          >
+            <mat-option value="left">Left</mat-option>
+            <mat-option value="right">Right</mat-option>
+            <mat-option value="middle">Middle</mat-option>
+            <mat-option value="scrollUp">Scroll Up</mat-option>
+            <mat-option value="scrollDown">Scroll Down</mat-option>
+            <mat-option value="scrollLeft">Scroll Left</mat-option>
+            <mat-option value="scrollRight">Scroll Right</mat-option>
+          </mat-select>
+          @if (getFieldGroup(i, 'button')?.errors?.['isNotEmpty']) {
+          <div>
+            <span class="text-red-500">Field 'Button' should not be empty</span>
+          </div>
           }
-
-          @if (getFieldGroup(i, 'type')?.value == "time") {
-            <mat-form-field>
-              <mat-label>The amount of time</mat-label>
-              <mat-select formControlName="type_duration">
-                <mat-option value="min">Minutes</mat-option>
-                <mat-option value="sec" selected>Seconds</mat-option>
-                <mat-option value="ms">Milliseconds</mat-option>
-              </mat-select>
-            </mat-form-field>
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type')?.value == "keyboard" || getFieldGroup(i,
+        'type')?.value == "mouse") {
+        <mat-form-field>
+          <mat-label>Type click</mat-label>
+          <mat-select
+            (selectionChange)="addCommandKeyUp(i, $event)"
+            formControlName="type_press"
+            (valueChange)="setValue(i, 'type_press', $event)"
+            [disabled]="setDisableField(i, 'type_press')"
+          >
+            <mat-option value="click" selected>Click</mat-option>
+            <mat-option value="down">Key down</mat-option>
+            <mat-option value="up" disabled>Key up</mat-option>
+            <mat-option
+              value="move"
+              [disabled]="getFieldGroup(i, 'type')?.value != 'mouse'"
+              >Move mouse</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type_press')?.value == "move" &&
+        getFieldGroup(i, 'type')?.value == "mouse") {
+        <mat-form-field>
+          <mat-label>Direction cursor</mat-label>
+          <mat-select formControlName="move_dir">
+            <mat-option value="x">X</mat-option>
+            <mat-option value="y">Y</mat-option>
+          </mat-select>
+          @if (getFieldGroup(i, 'move_dir')?.errors?.['isNotEmpty']) {
+          <div>
+            <span class="text-red-500"
+              >Field 'Mouse Move' should not be empty</span
+            >
+          </div>
           }
-
-          @if (getFieldGroup(i, 'type')?.value == "time") {
-            <mat-form-field>
-              <mat-label>The duration of the delay (in {{getFieldGroup(i, 'type_duration')?.value}})</mat-label>
-              <input matInput type="number" formControlName="duration" />
-            </mat-form-field>
-          }
-        </div>
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type_press')?.value == "move" &&
+        getFieldGroup(i, 'type')?.value == "mouse") {
+        <mat-form-field>
+          <mat-label>Cursor offset distance</mat-label>
+          <input matInput type="number" formControlName="move_amount" />
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type')?.value == "time") {
+        <mat-form-field>
+          <mat-label>The amount of time</mat-label>
+          <mat-select formControlName="type_duration">
+            <mat-option value="min">Minutes</mat-option>
+            <mat-option value="sec" selected>Seconds</mat-option>
+            <mat-option value="ms">Milliseconds</mat-option>
+          </mat-select>
+        </mat-form-field>
+        } @if (getFieldGroup(i, 'type')?.value == "time") {
+        <mat-form-field>
+          <mat-label
+            >The duration of the delay (in
+            {{ getFieldGroup(i, "type_duration")?.value }})</mat-label
+          >
+          <input matInput type="number" formControlName="duration" />
+        </mat-form-field>
+        }
       </div>
-      <button class="styleBut !w-max" (click)="addCommand(i+1)">Add</button>
-    }
-    @if (commands.controls.length == 0) {
-      <button class="styleBut !w-max" (click)="addCommand(0)">Add</button>
+    </div>
+    <button class="styleBut !w-max" (click)="addCommand(i + 1)">Add</button>
+    } @if (commands.controls.length == 0) {
+    <button class="styleBut !w-max" (click)="addCommand(0)">Add</button>
     }
   </ng-container>
 </div>
 
-<app-window-notify
-  [dataNotify]="dataNotify"
-></app-window-notify>
+<app-window-notify [dataNotify]="dataNotify"></app-window-notify>

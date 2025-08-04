@@ -56,6 +56,7 @@ export class AppScriptFormComponent {
   listKeys: Array<string> = [];
   listNumKeys: Array<string> = [];
   listAnotherKeys: Array<string> = ["Space", "Esc", "Ctrl", "Shift", "Alt", "Enter", "Tab", "Delete", "Home", "PageUp", "PageDown", "End"];
+  listFnKeys: Array<string> = ["F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"];
 
   isGetCommands: boolean = true;
 
